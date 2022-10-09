@@ -1,7 +1,7 @@
 
 import express, { Router } from 'express'
 import { WebhookEvent } from 'livekit-server-sdk/dist/proto/livekit_webhook'
-import { setParticipantNo, setRoomTurn } from '../utils/livekit'
+import { changeParticipantStatus, setParticipantNo, setRoomTurn } from '../utils/livekit'
 import { apiKey, apiSecret } from '../config/livekit'
 import { WebhookReceiver } from 'livekit-server-sdk'
 import { getCurrentTimestamp } from '../utils/common'
@@ -30,6 +30,8 @@ router.post('/', async (req, res): Promise<void> => {
         setParticipantNo(room.name, participant.identity, no)
         if(no == 1) {
           setRoomTurn(room.name, no, getCurrentTimestamp())
+        } else {
+          changeParticipantStatus(room.name, participant.identity, false)
         }
         break
       case 'participant_left':
