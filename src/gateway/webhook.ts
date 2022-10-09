@@ -11,8 +11,6 @@ const router: Router = express.Router()
 const receiver = new WebhookReceiver(apiKey, apiSecret)
 
 router.use(bodyParser.raw({
-  inflate: true,
-  limit: '100kb',
   type: '*/*'
 }))
 router.post('/', async (req, res): Promise<void> => {
@@ -24,12 +22,11 @@ router.post('/', async (req, res): Promise<void> => {
       case 'room_finished':
         break
       case 'participant_joined':
-        console.log(event)
         const { room, participant } = event
         if(!room || !participant) {
           return
         }
-        const no = room.numParticipants + 1
+        const no = room.numParticipants
         setParticipantNo(room.name, participant.identity, no)
         setRoomTurn(room.name, no, getCurrentTimestamp())
         break
