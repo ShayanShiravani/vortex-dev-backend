@@ -9,7 +9,7 @@ import { getCurrentTimestamp } from '../utils/common'
 const router: Router = express.Router()
 const receiver = new WebhookReceiver(apiKey, apiSecret)
 
-router.use(express.raw())
+router.use('/', express.raw())
 router.post('/', async (req, res): Promise<void> => {
   try {
     const event: WebhookEvent = receiver.receive(req.body, req.get('Authorization'))
