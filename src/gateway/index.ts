@@ -1,17 +1,18 @@
 import express, { Router, Request, Response } from 'express'
-import { AccessToken, WebhookReceiver } from 'livekit-server-sdk'
-import { apiKey, apiSecret } from '../config/livekit'
+import { AccessToken } from 'livekit-server-sdk'
 import { body, validationResult } from 'express-validator'
-import { WebhookEvent } from 'livekit-server-sdk/dist/proto/livekit_webhook'
+import bodyParser from 'body-parser'
 // import db from "../db/models"
 // import { create as createRoom } from "../db/models/Room"
 // import { create as createParticipant } from "../db/models/Participant"
-import { changeParticipantStatus, createRoom, getAllRooms, getParticipant, getRoom, getRoomParticipants, setParticipantNo, setRoomTurn } 
-from '../utils/livekit'
+import { changeParticipantStatus, createRoom, getAllRooms, getParticipant, 
+  getRoom, getRoomParticipants, setRoomTurn } from '../utils/livekit'
 import { getCurrentTimestamp } from '../utils/common'
 
 const router: Router = express.Router()
-const receiver = new WebhookReceiver(apiKey, apiSecret)
+
+router.use(bodyParser.urlencoded({ extended: false }))
+router.use(bodyParser.json())
 
 router.get('/', async (req: Request, res: Response, next): Promise<void> => {
 
@@ -316,31 +317,5 @@ router.post('/skip-turn',
     }
 
   })
-
-router.use('/webhook', express.raw())
-router.post('/webhook', async (req: Request, res: Response, next): Promise<void> => {
-  const event: WebhookEvent = receiver.receive(req.body, req.get('Authorization'))
-  switch (event.event) {
-    case 'room_started':
-      break
-    case 'room_finished':
-      break
-    case 'participant_joined':
-      console.log(event)
-      const { room, participant } = event
-      if(!room || !participant) {
-        return
-      }
-      const no = room.numParticipants + 1
-      setParticipantNo(room.name, participant.identity, no)
-      setRoomTurn(room.name, no, getCurrentTimestamp())
-      break
-    case 'participant_left':
-      break
-    default:
-      break
-  }
-
-})
 
 export default router
