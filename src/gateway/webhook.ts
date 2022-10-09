@@ -5,11 +5,12 @@ import { setParticipantNo, setRoomTurn } from '../utils/livekit'
 import { apiKey, apiSecret } from '../config/livekit'
 import { WebhookReceiver } from 'livekit-server-sdk'
 import { getCurrentTimestamp } from '../utils/common'
+import bodyParser from 'body-parser'
 
 const router: Router = express.Router()
 const receiver = new WebhookReceiver(apiKey, apiSecret)
 
-router.use('/', express.raw())
+router.use(bodyParser.raw())
 router.post('/', async (req, res): Promise<void> => {
   try {
     const event: WebhookEvent = receiver.receive(req.body, req.get('Authorization'))
