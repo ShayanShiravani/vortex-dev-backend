@@ -10,7 +10,11 @@ import bodyParser from 'body-parser'
 const router: Router = express.Router()
 const receiver = new WebhookReceiver(apiKey, apiSecret)
 
-router.use(bodyParser.raw())
+router.use(bodyParser.raw({
+  inflate: true,
+  limit: '100kb',
+  type: '*/*'
+}))
 router.post('/', async (req, res): Promise<void> => {
   try {
     const event: WebhookEvent = receiver.receive(req.body, req.get('Authorization'))
