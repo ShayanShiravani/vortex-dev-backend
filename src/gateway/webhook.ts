@@ -31,7 +31,7 @@ router.post('/', async (req, res): Promise<void> => {
         if(no == 1) {
           setRoomTurn(room.name, no, getCurrentTimestamp())
         } else {
-          changeParticipantStatus(room.name, participant.identity, false)
+          changeParticipantStatus(room.name, participant, false)
         }
         break
       case 'participant_left':
