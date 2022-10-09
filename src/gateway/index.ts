@@ -226,8 +226,12 @@ router.post('/change-turn',
 
       setRoomTurn(roomName, currentNo, getCurrentTimestamp())
 
-      if(currentParticipant) changeParticipantStatus(roomName, currentParticipant.identity, true)
-      if(prevParticipant) changeParticipantStatus(roomName, prevParticipant.identity, false)
+      if(currentParticipant) {
+        await changeParticipantStatus(roomName, currentParticipant.identity, true)
+      }
+      if(prevParticipant) {
+        await changeParticipantStatus(roomName, prevParticipant.identity, false)
+      }
 
       res.json({
         success: true,
