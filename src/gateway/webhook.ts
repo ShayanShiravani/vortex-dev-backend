@@ -28,7 +28,9 @@ router.post('/', async (req, res): Promise<void> => {
         }
         const no = room.numParticipants
         setParticipantNo(room.name, participant.identity, no)
-        setRoomTurn(room.name, no, getCurrentTimestamp())
+        if(no == 1) {
+          setRoomTurn(room.name, no, getCurrentTimestamp())
+        }
         break
       case 'participant_left':
         break
@@ -36,6 +38,7 @@ router.post('/', async (req, res): Promise<void> => {
         break
     }
   } catch (error: any) {
+    console.log("WEBHOOK_ERROR")
     console.log(error.message?error.message:error)
   }
 
