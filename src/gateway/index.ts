@@ -326,6 +326,7 @@ router.post('/webhook', async (req: Request, res: Response, next): Promise<void>
     case 'room_finished':
       break
     case 'participant_joined':
+      console.log(event)
       const { room, participant } = event
       if(!room || !participant) {
         return
