@@ -86,7 +86,13 @@ router.post('/join',
       const at = new AccessToken(undefined, undefined, {
         identity: participantName,
       })
-      at.addGrant({ roomJoin: true, room: roomName, canPublish: false })
+      at.addGrant(
+        { 
+          roomJoin: true, 
+          room: roomName, 
+          canPublish: room.numParticipants < 1 ? true : false 
+        }
+      )
       const token = at.toJwt()
 
       // if(at) {
