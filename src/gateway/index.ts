@@ -242,7 +242,7 @@ router.post('/change-turn',
         if(currentParticipant && !currentParticipant.permission?.canPublish) {
           await changeParticipantStatus(roomName, currentParticipant.identity, true)
         }
-      }, 5000);
+      }, 20000);
 
       res.json({
         success: true,
