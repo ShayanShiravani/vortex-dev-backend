@@ -117,9 +117,9 @@ export const setRoomTurn =
   }
 
 export const changeParticipantStatus = 
-  async (room: string, participant: ParticipantInfo, canPublish: boolean):
+  async (room: string, identity: string, canPublish: boolean):
   Promise<ParticipantInfo | undefined> => {
-    return svc.updateParticipant(room, participant.identity, participant.metadata, {
+    return svc.updateParticipant(room, identity, undefined, {
       canSubscribe: true,
       canPublish: canPublish,
       canPublishData: true,
