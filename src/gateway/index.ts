@@ -229,12 +229,14 @@ router.post('/change-turn',
 
       setRoomTurn(roomName, currentNo, getCurrentTimestamp())
 
-      // if(currentParticipant && !currentParticipant.permission?.canPublish) {
-      //   await changeParticipantStatus(roomName, currentParticipant.identity, true)
-      // }
       if(prevParticipant && prevParticipant.permission?.canPublish) {
         await changeParticipantStatus(roomName, prevParticipant.identity, false)
       }
+      setTimeout(async () => {
+        if(currentParticipant && !currentParticipant.permission?.canPublish) {
+          await changeParticipantStatus(roomName, currentParticipant.identity, true)
+        }
+      }, 5000);
 
       res.json({
         success: true,
