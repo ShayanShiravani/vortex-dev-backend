@@ -27,7 +27,7 @@ router.post('/', async (req, res): Promise<void> => {
           return
         }
         const no = room.numParticipants
-        await setParticipantNo(room.name, participant.identity, no)
+        await setParticipantNo(room.name, participant.identity, no, no==1?true:false)
         if(no == 1) {
           setRoomTurn(room.name, no, getCurrentTimestamp())
         } else {

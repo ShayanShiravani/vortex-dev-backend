@@ -5,7 +5,7 @@ import bodyParser from 'body-parser'
 // import db from "../db/models"
 // import { create as createRoom } from "../db/models/Room"
 // import { create as createParticipant } from "../db/models/Participant"
-import { changeParticipantStatus, createRoom, getAllRooms, getParticipant, 
+import { changeParticipantMetadata, changeParticipantStatus, createRoom, getAllRooms, getParticipant, 
   getRoom, getRoomParticipants, setRoomTurn } from '../utils/livekit'
 import { getCurrentTimestamp } from '../utils/common'
 
@@ -90,7 +90,7 @@ router.post('/join',
         { 
           roomJoin: true, 
           room: roomName, 
-          canPublish: room.numParticipants < 1 ? true : false 
+          // canPublish: room.numParticipants < 1 ? true : false 
         }
       )
       const token = at.toJwt()
@@ -235,14 +235,21 @@ router.post('/change-turn',
 
       setRoomTurn(roomName, currentNo, getCurrentTimestamp())
 
-      if(prevParticipant && prevParticipant.permission?.canPublish) {
-        await changeParticipantStatus(roomName, prevParticipant.identity, false)
+      // if(prevParticipant && prevParticipant.permission?.canPublish) {
+      //   await changeParticipantStatus(roomName, prevParticipant.identity, false)
+      // }
+      // setTimeout(async () => {
+      //   if(currentParticipant && !currentParticipant.permission?.canPublish) {
+      //     await changeParticipantStatus(roomName, currentParticipant.identity, true)
+      //   }
+      // }, 20000);
+
+      if(prevParticipant) {
+        await changeParticipantMetadata(roomName, prevParticipant, false)
       }
-      setTimeout(async () => {
-        if(currentParticipant && !currentParticipant.permission?.canPublish) {
-          await changeParticipantStatus(roomName, currentParticipant.identity, true)
-        }
-      }, 20000);
+      if(currentParticipant) {
+        await changeParticipantMetadata(roomName, currentParticipant, true)
+      }
 
       res.json({
         success: true,

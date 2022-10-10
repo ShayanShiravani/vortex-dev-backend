@@ -63,9 +63,10 @@ export const getParticipant = async (room: string, identity: string):
   }
 
 export const setParticipantNo = 
-  async (room: string, identity: string, no: number) => {
+  async (room: string, identity: string, no: number, canPublish: boolean = true) => {
     const metadata = JSON.stringify({
-      no: no
+      no: no,
+      canPublish: canPublish
     })
     return svc.updateParticipant(room, identity, metadata)
       .then(
@@ -136,4 +137,24 @@ export const changeParticipantStatus =
       return undefined
     })
   }
+
+  export const changeParticipantMetadata = 
+    async (room: string, participant: ParticipantInfo, canPublish: boolean):
+    Promise<ParticipantInfo | undefined> => {
+      const oldMetadata = JSON.parse(participant.metadata)
+      const metadata = JSON.stringify({
+        ...oldMetadata,
+        canPublish: canPublish
+      })
+      return svc.updateParticipant(room, participant.identity, metadata)
+      .then(
+        (participant: ParticipantInfo) => {
+          return participant
+        }
+      )
+      .catch(error => {
+        console.log(error.message?error.message:error)
+        return undefined
+      })
+    }
 
