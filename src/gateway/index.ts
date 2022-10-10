@@ -194,7 +194,7 @@ router.post('/change-turn',
 
     try {
       let room = await getRoom(roomName)
-      if(!room || room.numParticipants < 1) {
+      if(!room) {
         res.json({
           success: false,
           message: "INVALID_ROOM"
@@ -204,7 +204,10 @@ router.post('/change-turn',
 
       const rMetadata = JSON.parse(room.metadata)
 
-      if(getCurrentTimestamp() < rMetadata.end_time) {
+      if(
+        getCurrentTimestamp() < rMetadata.end_time || 
+        room.numParticipants <= 1
+      ) {
         res.json({
           success: false,
           message: "INVALID_REQUEST"
@@ -226,12 +229,12 @@ router.post('/change-turn',
 
       setRoomTurn(roomName, currentNo, getCurrentTimestamp())
 
-      if(currentParticipant) {
+      if(currentParticipant && !currentParticipant.permission?.canPublish) {
         await changeParticipantStatus(roomName, currentParticipant.identity, true)
       }
-      if(prevParticipant) {
-        await changeParticipantStatus(roomName, prevParticipant.identity, false)
-      }
+      // if(prevParticipant && prevParticipant.permission?.canPublish) {
+      //   await changeParticipantStatus(roomName, prevParticipant.identity, false)
+      // }
 
       res.json({
         success: true,
