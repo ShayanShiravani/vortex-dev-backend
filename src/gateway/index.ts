@@ -229,9 +229,9 @@ router.post('/change-turn',
       if(currentParticipant) {
         await changeParticipantStatus(roomName, currentParticipant.identity, true)
       }
-      // if(prevParticipant) {
-      //   await changeParticipantStatus(roomName, prevParticipant, false)
-      // }
+      if(prevParticipant) {
+        await changeParticipantStatus(roomName, prevParticipant.identity, false)
+      }
 
       res.json({
         success: true,
