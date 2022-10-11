@@ -284,7 +284,7 @@ router.post('/skip-turn',
 
     try {
       let room = await getRoom(roomName)
-      if(!room || room.numParticipants < 1) {
+      if(!room) {
         res.json({
           success: false,
           message: "INVALID_ROOM"
@@ -305,7 +305,7 @@ router.post('/skip-turn',
       const pMetadata = JSON.parse(participant.metadata)
       const rMetadata = JSON.parse(room.metadata)
 
-      if(pMetadata.no != rMetadata.no) {
+      if(pMetadata.no != rMetadata.no || room.numParticipants <= 1) {
         res.json({
           success: false,
           message: "INVALID_REQUEST"
@@ -313,23 +313,27 @@ router.post('/skip-turn',
         return next()
       }
       
-      const currentNo = rMetadata.no == room.numParticipants ? 1 : rMetadata.no + 1
+      const nextNo = rMetadata.no == room.numParticipants ? 1 : rMetadata.no + 1
       const participants = await getRoomParticipants(roomName)
 
       const nextParticipant = participants?.find(p => {
         const cMetadata = JSON.parse(p.metadata)
-        return cMetadata.no == currentNo
+        return cMetadata.no == nextNo
       })
 
-      setRoomTurn(roomName, currentNo, getCurrentTimestamp())
-      await changeParticipantStatus(roomName, participant.identity, false)
+      setRoomTurn(roomName, nextNo, getCurrentTimestamp())
+      // await changeParticipantStatus(roomName, participant.identity, false)
+      // if(nextParticipant) {
+      //   await changeParticipantStatus(roomName, nextParticipant.identity, true)
+      // }
+      await changeParticipantMetadata(roomName, participant, false)
       if(nextParticipant) {
-        await changeParticipantStatus(roomName, nextParticipant.identity, true)
+        await changeParticipantMetadata(roomName, nextParticipant, true)
       }
 
       res.json({
         success: true,
-        data: room
+        data: "TURN_SKIPPED"
       })
 
     } catch(err: any) {
